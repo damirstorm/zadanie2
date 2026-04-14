@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
+from uuid import UUID
 from ..database import get_db
 from ..models import ScheduledJob
 from ..schemas import JobOut
@@ -42,7 +43,7 @@ def history_jobs(
 
 
 @router.post("/{job_id}/run-now")
-def run_now(job_id: str, db: Session = Depends(get_db)):
+def run_now(job_id: UUID, db: Session = Depends(get_db)):  # ← UUID вместо str
     """Ручной запуск задачи немедленно."""
     job = db.query(ScheduledJob).filter(ScheduledJob.id == job_id).first()
     if not job:
@@ -57,7 +58,7 @@ def run_now(job_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/{job_id}/cancel")
-def cancel_job(job_id: str, db: Session = Depends(get_db)):
+def cancel_job(job_id: UUID, db: Session = Depends(get_db)):  # ← UUID вместо str
     """Отмена задачи из плана."""
     job = db.query(ScheduledJob).filter(ScheduledJob.id == job_id).first()
     if not job:
